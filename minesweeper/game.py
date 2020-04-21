@@ -43,9 +43,25 @@ class Board:
             return self._grid[row][col]
         return default
 
+    def _dfs_visit(self, col, row):
+        square = self._fetch_square(col, row)
+        if not square or square.revealed():
+            return
+
+        square.reveal()
+        if square.is_empty():
+            self._dfs_visit(col - 1, row - 1)
+            self._dfs_visit(col - 1, row)
+            self._dfs_visit(col - 1, row + 1)
+            self._dfs_visit(col, row - 1)
+            self._dfs_visit(col, row + 1)
+            self._dfs_visit(col + 1, row - 1)
+            self._dfs_visit(col + 1, row)
+            self._dfs_visit(col + 1, row + 1)
+
     def play(self, col, row):
-        # TODO Probably DFS to reveal region
         try:
+            self._dfs_visit(col, row)
             self._grid[row][col].play()
         except BombFound as e:
             self.__reveal()
@@ -90,6 +106,9 @@ class Board:
         def reveal(self, ignore_bombs=False):
             self._revealed = True
 
+        def revealed(self):
+            return self._revealed
+
         def plant_bomb(self):
             self._bomb = True
 
@@ -98,6 +117,9 @@ class Board:
 
         def next_to_bomb(self):
             self._clue += 1
+
+        def is_empty(self):
+            return not self.has_bomb() and self._clue == 0
 
         def __str__(self):
             if self._revealed:
