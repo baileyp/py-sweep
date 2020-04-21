@@ -18,14 +18,30 @@ class Board:
         bombs = {EASY: 10, INTERMEDIATE: 20, HARD: 30}.get(difficulty)
         while bombs:
             while True:
-                square = self._grid[randrange(0, self._height)][randrange(0, self._width)]
+                row = randrange(0, self._height)
+                col = randrange(0, self._width)
+                square = self._grid[row][col]
                 if not square.has_bomb():
                     break
             square.plant_bomb()
+            self._set_clues_around(col, row)
             bombs -= 1
 
-        # Set clues
-        # TODO
+    def _set_clues_around(self, col, row):
+        null = self.NullSquare()
+        self._fetch_square(col - 1, row - 1, null).next_to_bomb()
+        self._fetch_square(col - 1, row, null).next_to_bomb()
+        self._fetch_square(col - 1, row + 1, null).next_to_bomb()
+        self._fetch_square(col, row - 1, null).next_to_bomb()
+        self._fetch_square(col, row + 1, null).next_to_bomb()
+        self._fetch_square(col + 1, row - 1, null).next_to_bomb()
+        self._fetch_square(col + 1, row, null).next_to_bomb()
+        self._fetch_square(col + 1, row + 1, null).next_to_bomb()
+
+    def _fetch_square(self, col, row, default=None):
+        if self.valid_row(row) and self.valid_col(col):
+            return self._grid[row][col]
+        return default
 
     def play(self, col, row):
         # TODO Probably DFS to reveal region
@@ -36,10 +52,10 @@ class Board:
             raise e
 
     def valid_row(self, row):
-        return 0 < row <= self._height
+        return 0 <= row < self._height
 
     def valid_col(self, col):
-        return 0 < col <= self._width
+        return 0 <= col < self._width
 
     def __reveal(self):
         for row in self._grid:
@@ -62,7 +78,7 @@ class Board:
     class Square:
         def __init__(self):
             self._revealed = False
-            self._val = 0
+            self._clue = 0
             self._bomb = False
 
         def play(self):
@@ -80,14 +96,21 @@ class Board:
         def has_bomb(self):
             return self._bomb
 
+        def next_to_bomb(self):
+            self._clue += 1
+
         def __str__(self):
             if self._revealed:
-                if self._val:
-                    return str(self._val)
+                if self._clue:
+                    return str(self._clue)
                 if self._bomb:
                     return '*'
                 return ' '
             return '?'
+
+    class NullSquare(Square):
+        def next_to_bomb(self):
+            pass
 
 class BombFound(Exception):
     pass

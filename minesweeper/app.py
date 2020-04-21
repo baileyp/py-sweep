@@ -22,17 +22,17 @@ def run():
         while True:
             console.out("Choose a square!")
             col = console.read_until(
-                lambda: console.read("Which column?", int, 0),
+                lambda: console.read("Which column?", int, 0) - 1,
                 board.valid_col,
                 "Invalid column, please choose again"
             )
             row = console.read_until(
-                lambda: console.read("Which row?", int, 0),
+                lambda: console.read("Which row?", int, 0) - 1,
                 board.valid_row,
                 "Invalid row, please choose again"
             )
 
-            board.play(col - 1, row - 1)
+            board.play(col, row)
             console.out(str(board))
     except game.BombFound as e:
         console.out(str(board))
