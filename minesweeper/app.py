@@ -4,7 +4,7 @@ from minesweeper import console, game
 def run():
     user_input = console.read("Would you like to play a game?").lower()
     if user_input not in ('y', 'yes', 'yup', 'yeah', 'ya', 'sure', 'why not', 'ok'):
-        print("Ok bye!")
+        console.out("Ok bye!")
         exit(0)
 
     user_input = console.read_until(
@@ -34,10 +34,10 @@ def run():
 
             board.play(col, row)
             console.out(str(board))
-    except game.BombFound as e:
+    except game.BombFound:
         console.out(str(board))
         console.out("Oh no, you found a bomb! Game Over!")
-    except game.Victory as e:
+    except game.Victory:
         console.out(str(board))
         console.out("Congratulations, you avoided all the bombs! Victory!")
     except Exception as e:

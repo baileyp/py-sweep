@@ -104,12 +104,12 @@ class Board:
             self._bomb = False
 
         def play(self):
-            if (self._bomb):
+            if self._bomb:
                 raise BombFound
                 pass
             self.reveal()
 
-        def reveal(self, ignore_bombs=False):
+        def reveal(self):
             self._revealed = True
 
         def revealed(self):
@@ -140,8 +140,10 @@ class Board:
         def next_to_bomb(self):
             pass
 
+
 class BombFound(Exception):
     pass
+
 
 class Victory(Exception):
     pass
