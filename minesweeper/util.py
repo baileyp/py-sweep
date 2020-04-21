@@ -1,2 +1,2 @@
 def prompt_input(prompt):
-    return str(raw_input(str(prompt).strip() + ' ')).strip()
+    return str(input(str(prompt).strip() + ' ')).strip()
