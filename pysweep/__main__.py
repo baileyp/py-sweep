@@ -1,4 +1,4 @@
-from minesweeper import app
+from pysweep import app
 
 if __name__ == '__main__':
     app.run()

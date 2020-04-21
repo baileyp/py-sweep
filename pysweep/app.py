@@ -1,4 +1,4 @@
-from minesweeper import console, game
+from pysweep import console, game
 
 
 def run():
@@ -15,12 +15,12 @@ def run():
 
     board = game.Board(user_input)
 
-    console.out("\nLet's begin, here is your gameboard:")
+    console.out("\nLet's begin, here is your yard:")
     console.out(str(board))
 
     try:
         while True:
-            console.out("Choose a square!")
+            console.out("Choose a plot!")
             col = console.read_until(
                 lambda: console.read("Which column?", int, 0) - 1,
                 board.valid_col,
@@ -34,12 +34,12 @@ def run():
 
             board.play(col, row)
             console.out(str(board))
-    except game.BombFound:
+    except game.ThreatFound:
         console.out(str(board))
-        console.out("Oh no, you found a bomb! Game Over!")
+        console.out("Oh no, you stepped on a snake! Game Over!")
     except game.Victory:
         console.out(str(board))
-        console.out("Congratulations, you avoided all the bombs! Victory!")
+        console.out("Congratulations, you located all the snakes! Victory!")
     except Exception as e:
         console.out(type(e))
         console.out(e)

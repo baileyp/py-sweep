@@ -1,4 +1,6 @@
-# Minesweeper
+# PySweep
+
+There are ~~pythons~~ snakes in the grass!
 
 This project is a console implementation of the classic game
 [Minesweeper](https://en.wikipedia.org/wiki/Minesweeper_\(video_game\))
@@ -7,10 +9,10 @@ as recommended by
 
 ## Running
 
-Just clone the repo and execute the `minesweeper` module
+Just clone the repo and execute the `pysweep` module
 
 ```bash
-$ python -m minesweeper
+$ python -m pysweep
 ```
 
 The prompts will guide you from there.
@@ -34,8 +36,9 @@ The prompts will guide you from there.
 - Unit tests
 - Doc strings
 - ~~Add victory condition~~
-- Add bomb flagging
-- Add bomb count
+- Add snake flagging
+- Add snake count
 - Add timer
 - Add UI colors
+- Uncouple rendering from state
 - Get fancy! Maybe some context managers or decorators
