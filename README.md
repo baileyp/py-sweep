@@ -32,7 +32,8 @@ The prompts will guide you from there.
 ## TODO
 
 - Unit tests
-- Add victory condition
+- Doc strings
+- ~~Add victory condition~~
 - Add bomb flagging
 - Add bomb count
 - Add timer

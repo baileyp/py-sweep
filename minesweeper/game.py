@@ -12,10 +12,12 @@ class Board:
     def __init__(self, difficulty):
         self._width = {EASY: 9, INTERMEDIATE: 15, HARD: 20}.get(difficulty)
         self._height = {EASY: 9, INTERMEDIATE: 9, HARD: 15}.get(difficulty)
+        self._bomb_counter = {EASY: 10, INTERMEDIATE: 20, HARD: 30}.get(difficulty)
         self._grid = [[self.Square() for i in range(0, self._width)] for i in range(0, self._height)]
+        self._hidden_remaining = self._width * self._height - self._bomb_counter
 
         # Set bombs
-        bombs = {EASY: 10, INTERMEDIATE: 20, HARD: 30}.get(difficulty)
+        bombs = self._bomb_counter
         while bombs:
             while True:
                 row = randrange(0, self._height)
@@ -49,6 +51,7 @@ class Board:
             return
 
         square.reveal()
+        self._hidden_remaining -= 1
         if square.is_empty():
             self._dfs_visit(col - 1, row - 1)
             self._dfs_visit(col - 1, row)
@@ -63,6 +66,9 @@ class Board:
         try:
             self._dfs_visit(col, row)
             self._grid[row][col].play()
+            if self._hidden_remaining == 0:
+                raise Victory
+
         except BombFound as e:
             self.__reveal()
             raise e
@@ -135,4 +141,7 @@ class Board:
             pass
 
 class BombFound(Exception):
+    pass
+
+class Victory(Exception):
     pass

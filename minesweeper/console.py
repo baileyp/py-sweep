@@ -6,6 +6,7 @@ def read(prompt, cast=str, on_value_error=None):
             return on_value_error
         raise e
 
+
 def read_until(callback, validator, failure):
     while True:
         user_input = callback()

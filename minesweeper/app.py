@@ -37,6 +37,9 @@ def run():
     except game.BombFound as e:
         console.out(str(board))
         console.out("Oh no, you found a bomb! Game Over!")
+    except game.Victory as e:
+        console.out(str(board))
+        console.out("Congratulations, you avoided all the bombs! Victory!")
     except Exception as e:
         console.out(type(e))
         console.out(e)
