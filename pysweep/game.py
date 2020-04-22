@@ -1,11 +1,15 @@
 from contextlib import redirect_stdout
 from io import StringIO
-from random import choice, randrange
+from random import randrange
 
 EASY = 'E'
 INTERMEDIATE = 'I'
 HARD = 'H'
+FLAG = 'F'
+REVEAL = 'R'
+QUIT = 'Q'
 DIFFICULTIES = (EASY, INTERMEDIATE, HARD)
+ACTIONS = (FLAG, REVEAL)
 
 
 class Board:
@@ -52,6 +56,9 @@ class Board:
         square.reveal()
         self._hidden_remaining -= 1
         if square.is_empty():
+            if square.is_flagged():
+                square.flag()
+                self._threat_counter += 1
             self._dfs_visit(col - 1, row - 1)
             self._dfs_visit(col - 1, row)
             self._dfs_visit(col - 1, row + 1)
@@ -61,10 +68,22 @@ class Board:
             self._dfs_visit(col + 1, row)
             self._dfs_visit(col + 1, row + 1)
 
-    def play(self, col, row):
+    def play(self, action, col, row):
+        square = self._grid[row][col]
+        if action == FLAG:
+            if square.revealed():
+                raise CannotFlag
+            if square.flag():
+                self._threat_counter -= 1
+            else:
+                self._threat_counter += 1
+            return
         try:
+            if square.is_flagged():
+                raise CannotReveal
+            if square.has_threat():
+                raise ThreatFound
             self._dfs_visit(col, row)
-            self._grid[row][col].play()
             if self._hidden_remaining == 0:
                 raise Victory
 
@@ -94,22 +113,26 @@ class Board:
             for i, row in enumerate(self._grid):
                 print(str(i + 1).rjust(2, ' '), '║ ', end='')
                 print(*[str(square) for square in row], sep='  ')
+
+            print("Snakes Remaining:", self._threat_counter, sep="\t")
         return buffer.getvalue()
 
     class Square:
         def __init__(self):
             self._revealed = False
+            self._flagged = False
             self._clue = 0
             self._threat = False
 
-        def play(self):
-            if self._threat:
-                raise ThreatFound
-                pass
-            self.reveal()
-
         def reveal(self):
             self._revealed = True
+
+        def flag(self):
+            self._flagged = not self._flagged
+            return self._flagged
+
+        def is_flagged(self):
+            return self._flagged
 
         def revealed(self):
             return self._revealed
@@ -127,9 +150,11 @@ class Board:
             return not self.has_threat() and self._clue == 0
 
         def __str__(self):
+            if self._flagged:
+                return '⚑'
             if self._revealed:
                 if self._threat:
-                    return choice(['ϧ', 'Ҩ', 'Ƨ'])
+                    return '೬'
                 if self._clue:
                     return str(self._clue)
                 return ' '
@@ -141,6 +166,18 @@ class Board:
 
 
 class ThreatFound(Exception):
+    pass
+
+
+class CannotReveal(Exception):
+    pass
+
+
+class CannotFlag(Exception):
+    pass
+
+
+class QuitGame(Exception):
     pass
 
 

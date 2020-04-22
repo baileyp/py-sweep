@@ -47,8 +47,8 @@ Overall I'm pleased with the implementation for a few hours work.
 - Admin: Unit tests
 - Admin: Doc strings
 - ~~Feature: Add victory condition~~
-- Feature: Add snake flagging
-- Feature: Add snake count
+- ~~Feature: Add snake flagging~~
+- ~~Feature: Add snake count~~
 - Feature: Add timer
 - Feature: Add UI colors
 - Refactor: Uncouple rendering from state
