@@ -15,6 +15,15 @@ Just clone the repo and execute the `pysweep` module
 $ python -m pysweep
 ```
 
+### Tests
+
+Tests are written with pytest. Install if not installed already and just run `pytest`
+
+```bash
+$ pip install -U pytest
+$ pytest
+```
+
 The prompts will guide you from there.
 
 ## Programming Concepts/Patterns Used
