@@ -68,6 +68,11 @@ class Board:
             self._dfs_visit(col + 1, row)
             self._dfs_visit(col + 1, row + 1)
 
+    def _reveal(self):
+        for row in self._grid:
+            for square in row:
+                square.reveal()
+
     def play(self, action, col, row):
         square = self._grid[row][col]
         if action == FLAG:
@@ -88,7 +93,7 @@ class Board:
                 raise Victory
 
         except ThreatFound as e:
-            self.__reveal()
+            self._reveal()
             raise e
 
     def valid_row(self, row):
@@ -96,11 +101,6 @@ class Board:
 
     def valid_col(self, col):
         return 0 <= col < self._width
-
-    def __reveal(self):
-        for row in self._grid:
-            for square in row:
-                square.reveal()
 
     def __str__(self):
         buffer = StringIO()

@@ -1,5 +1,7 @@
 import pytest
 from pysweep import console as module
+from tests.mocks import mock_input
+from tests.stubs import FunctionInvoked
 
 
 class TestConsole:
@@ -95,17 +97,3 @@ class TestConsole:
 
         with pytest.raises(FunctionInvoked):
             module.out(message, mock_print)
-
-
-def mock_input(prompt, response):
-
-    def mock(p):
-        nonlocal prompt, response
-        assert p == f"{prompt} "
-        return response
-
-    return mock
-
-
-class FunctionInvoked(BaseException):
-    pass
