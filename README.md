@@ -15,6 +15,8 @@ Just clone the repo and execute the `pysweep` module
 $ python -m pysweep
 ```
 
+The prompts will guide you from there.
+
 ### Tests
 
 Tests are written with pytest. Install if not installed already and just run `pytest`
@@ -23,8 +25,6 @@ Tests are written with pytest. Install if not installed already and just run `py
 $ pip install -U pytest
 $ pytest
 ```
-
-The prompts will guide you from there.
 
 ## Programming Concepts/Patterns Used
 
@@ -43,10 +43,13 @@ The prompts will guide you from there.
 ## Thoughts
 
 I know there are best in class packages available in the community to handle some of the things done here better, but as
-a practice exercise I wanted to keep this pure python.
+a practice exercise I wanted to keep this pure python, save testing.
 
 I'm not great at making console applications and am even less experienced at dealing with game loops. I don't feel great
 about the use of Exceptions to manage game termination but it works for now. 
+
+Now that I have some unit tests in place I feel like there are lots of improvements/refinements to be made there. More
+to be done with pytests fixtures, stubs, and spies.
 
 Overall I'm pleased with the implementation for a few hours work.
 
@@ -68,7 +71,7 @@ Overall I'm pleased with the implementation for a few hours work.
 
 ### 0.4.0
 
-- Updated rendering so playing larger boards is a big easier
+- Updated rendering so playing larger boards is a bit easier
 
 ### 0.3.0
 
