@@ -1,5 +1,3 @@
-from contextlib import redirect_stdout
-from io import StringIO
 from random import randrange
 
 EASY = 'E'
@@ -13,12 +11,13 @@ ACTIONS = (FLAG, REVEAL)
 
 
 class Board:
-    def __init__(self, difficulty):
+    def __init__(self, difficulty, renderer):
         self._width = {EASY: 9, INTERMEDIATE: 15, HARD: 20}.get(difficulty)
         self._height = {EASY: 9, INTERMEDIATE: 9, HARD: 15}.get(difficulty)
         self._threat_counter = {EASY: 10, INTERMEDIATE: 20, HARD: 30}.get(difficulty)
-        self._grid = [[self.Square() for i in range(0, self._width)] for i in range(0, self._height)]
+        self._grid = [[self.Square() for _ in range(0, self._width)] for _ in range(0, self._height)]
         self._hidden_remaining = self._width * self._height - self._threat_counter
+        self._renderer = renderer
 
         threats = self._threat_counter
         while threats:
@@ -102,22 +101,15 @@ class Board:
     def valid_col(self, col):
         return 0 <= col < self._width
 
-    def __str__(self):
-        buffer = StringIO()
-        with redirect_stdout(buffer):
-            print("    ", end='')
-            print(*[str(col).rjust(2, ' ') for col in range(1, self._width + 1)])
-            print("   ╔", end='')
-            print(*["═══"] * self._width, sep='')
-
-            for i, row in enumerate(self._grid):
-                print(str(i + 1).rjust(2, ' '), '║ ', end='')
-                print(*[str(square) for square in row], sep='  ')
-
-            print("Snakes Remaining:", self._threat_counter, sep="\t")
-        return buffer.getvalue()
+    def render(self):
+        return self._renderer.render_board(self._grid, self._threat_counter)
 
     class Square:
+        DEFAULT = 'd'
+        FLAG = 'f'
+        THREAT = 't'
+        REVEALED = 'r'
+
         def __init__(self):
             self._revealed = False
             self._flagged = False
@@ -149,16 +141,16 @@ class Board:
         def is_empty(self):
             return not self.has_threat() and self._clue == 0
 
-        def __str__(self):
+        def render(self):
             if self._flagged:
-                return '⚑'
+                return self.FLAG
             if self._revealed:
                 if self._threat:
-                    return '೬'
+                    return self.THREAT
                 if self._clue:
                     return str(self._clue)
-                return ' '
-            return 'ψ'
+                return self.REVEALED
+            return self.DEFAULT
 
     class NullSquare(Square):
         def next_to_threat(self):

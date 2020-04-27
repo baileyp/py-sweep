@@ -1,4 +1,4 @@
-from pysweep import console, game
+from pysweep import console, game, renderer
 
 def run():
     user_input = console.read("Would you like to play a game?").lower()
@@ -12,7 +12,7 @@ def run():
         "Invalid difficulty chosen."
     )
 
-    board = game.Board(user_input)
+    board = game.Board(user_input, renderer.SnakeRenderer())
 
     console.out("\nHOW TO PLAY")
     console.out("-----------")
@@ -29,7 +29,7 @@ def run():
     console.out("Quit game: q")
 
     console.out("\nLet's begin! here is your yard:\n")
-    console.out(str(board))
+    console.out(board.render())
 
     def parse_command(cmd):
         if cmd.upper() == game.QUIT:
@@ -59,12 +59,12 @@ def run():
                 console.out("\nFlags must be removed before the plot can be revealed!")
             except game.CannotFlag:
                 console.out("\nFlags cannot be placed on revealed plots!")
-            console.out("\n" + str(board))
+            console.out("\n" + board.render())
     except game.ThreatFound:
-        console.out(str(board))
+        console.out(board.render())
         console.out("Oh no, you stepped on a snake! Game Over!")
     except game.Victory:
-        console.out(str(board))
+        console.out(board.render())
         console.out("Congratulations, you located all the snakes! Victory!")
     except game.QuitGame:
         console.out("Bye now, hope you had fun!")

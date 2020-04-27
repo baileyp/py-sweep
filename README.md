@@ -46,19 +46,41 @@ I know there are best in class packages available in the community to handle som
 a practice exercise I wanted to keep this pure python.
 
 I'm not great at making console applications and am even less experienced at dealing with game loops. I don't feel great
-about the use of Exceptions to manage game termination but it works for now. I'm definitely unhappy with most of the
-rendering so I expect to overhaul that at some point.
+about the use of Exceptions to manage game termination but it works for now. 
 
 Overall I'm pleased with the implementation for a few hours work.
 
 ## TODO
 
-- Admin: Unit tests
+- ~~Admin: Unit tests~~
 - Admin: Doc strings
 - ~~Feature: Add victory condition~~
 - ~~Feature: Add snake flagging~~
 - ~~Feature: Add snake count~~
 - Feature: Add timer
 - Feature: Add UI colors
-- Refactor: Uncouple rendering from state
+- Feature: Richer input options (Multiple row/column selection per command)
+- ~~Refactor: Uncouple rendering from state~~
 - Refactor: Get fancy! Maybe some context managers or decorators
+- Refactor: Unit tests to make better use of built-in mocking
+
+## Changelog
+
+### 0.4.0
+
+- Updated rendering so playing larger boards is a big easier
+
+### 0.3.0
+
+- Added snake flagging
+- Added snake counter
+
+### 0.2.0
+
+- Rebranded game as PySweep
+
+### 0.1.0
+
+- Version playable version of game that is winnable
+- No flagging
+- No bomb counter
