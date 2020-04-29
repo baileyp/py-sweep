@@ -61,7 +61,7 @@ Overall I'm pleased with the implementation for a few hours work.
 - ~~Feature: Add snake flagging~~
 - ~~Feature: Add snake count~~
 - Feature: Add timer
-- Feature: Add UI colors
+- ~~Feature: Add UI colors~~
 - Feature: Richer input options (Multiple row/column selection per command)
 - ~~Refactor: Uncouple rendering from state~~
 - Refactor: Get fancy! Maybe some context managers or decorators

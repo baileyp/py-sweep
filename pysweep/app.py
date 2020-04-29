@@ -1,4 +1,5 @@
-from pysweep import console, game, renderer
+from pysweep import colors, console, game, renderer
+
 
 def run():
     user_input = console.read("Would you like to play a game?").lower()

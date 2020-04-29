@@ -28,5 +28,5 @@ class TestSnakeRenderer:
     def test_render_square(self, square_val, expected, mock_square):
         renderer = module.SnakeRenderer()
         mock_square.render.return_value = square_val
-        assert expected == renderer.render_square(mock_square)
+        assert expected in renderer.render_square(mock_square)
         mock_square.render.assert_called_once()

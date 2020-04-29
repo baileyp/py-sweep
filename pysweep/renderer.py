@@ -1,11 +1,14 @@
 from contextlib import redirect_stdout
 from io import StringIO
+
+from pysweep.colors import SnakeColors
 from pysweep.game import Board
 
 
 class SnakeRenderer:
-    def __init__(self, with_chrome=True):
+    def __init__(self, with_chrome=True, colors=SnakeColors):
         self._with_chrome = with_chrome
+        self._colors = colors
 
     def render_board(self, grid, counter):
         width = len(grid[0])
@@ -31,18 +34,17 @@ class SnakeRenderer:
                 print("    ╚═", horiz_border, "═╝", sep='')
                 print(*cols)
 
-            print("Snakes Remaining:", counter, sep="\t")
+            print(f"Snakes Remaining: {self._colors.THREAT_COUNTER}{counter}{self._colors.END}")
         return buffer.getvalue()
 
-    @staticmethod
-    def render_square(square):
+    def render_square(self, square):
         val = square.render()
         if val == Board.Square.DEFAULT:
-            return 'ψ'
+            return f'{self._colors.GRASS}ψ{self._colors.END}'
         if val == Board.Square.REVEALED:
             return ' '
         if val == Board.Square.THREAT:
-            return '೬'
+            return f'{self._colors.THREAT}೬{self._colors.END}'
         if val == Board.Square.FLAG:
-            return '⚑'
-        return val
+            return f'{self._colors.FLAG}⚑{self._colors.END}'
+        return f"{self._colors.CLUE}{val}{self._colors.END}"
