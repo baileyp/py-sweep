@@ -49,7 +49,7 @@ I'm not great at making console applications and am even less experienced at dea
 about the use of Exceptions to manage game termination but it works for now. 
 
 Now that I have some unit tests in place I feel like there are lots of improvements/refinements to be made there. More
-to be done with pytests fixtures, stubs, and spies.
+to be done with pytest's fixtures, stubs, and spies.
 
 Overall I'm pleased with the implementation for a few hours work.
 
@@ -60,7 +60,7 @@ Overall I'm pleased with the implementation for a few hours work.
 - ~~Feature: Add victory condition~~
 - ~~Feature: Add snake flagging~~
 - ~~Feature: Add snake count~~
-- Feature: Add timer
+- ~~Feature: Add timer~~
 - ~~Feature: Add UI colors~~
 - Feature: Richer input options (Multiple row/column selection per command)
 - ~~Refactor: Uncouple rendering from state~~
@@ -68,6 +68,11 @@ Overall I'm pleased with the implementation for a few hours work.
 - Refactor: Unit tests to make better use of built-in mocking
 
 ## Changelog
+
+### 0.5.0
+
+- Added UI colors
+- Added game timer
 
 ### 0.4.0
 

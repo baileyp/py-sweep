@@ -6,10 +6,12 @@ class Colorless:
     END = ''
     ERROR = ''
     THREAT_COUNTER = ''
+    TIMER = ''
 
 
 class Colored(Colorless):
     THREAT_COUNTER = '\033[38;5;196m'
+    TIMER = '\033[38;5;33m'
     END = '\033[0m'
 
 

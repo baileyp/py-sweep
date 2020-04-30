@@ -1,5 +1,7 @@
 from random import randrange
 
+from pysweep.timer import Timer
+
 EASY = 'E'
 INTERMEDIATE = 'I'
 HARD = 'H'
@@ -18,6 +20,8 @@ class Board:
         self._grid = [[self.Square() for _ in range(0, self._width)] for _ in range(0, self._height)]
         self._hidden_remaining = self._width * self._height - self._threat_counter
         self._renderer = renderer
+        self._timer = Timer()
+        self._timer.start()
 
         threats = self._threat_counter
         while threats:
@@ -102,7 +106,7 @@ class Board:
         return 0 <= col < self._width
 
     def render(self):
-        return self._renderer.render_board(self._grid, self._threat_counter)
+        return self._renderer.render_board(self._grid, self._threat_counter, self._timer.get_elapsed())
 
     class Square:
         DEFAULT = 'd'

@@ -66,7 +66,7 @@ class TestGame:
                 mock.patch.object(board, '_threat_counter') as mock_threat_counter, \
                 mock.patch.object(board, '_renderer') as mock_renderer:
             board.render()
-            mock_renderer.render_board.assert_called_once_with(mock_grid, mock_threat_counter)
+            mock_renderer.render_board.assert_called_once_with(mock_grid, mock_threat_counter, mock.ANY)
 
 
 def make_board(difficulty, row=0, col=0, **kwargs):

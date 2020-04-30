@@ -10,7 +10,7 @@ class SnakeRenderer:
         self._with_chrome = with_chrome
         self._colors = colors
 
-    def render_board(self, grid, counter):
+    def render_board(self, grid, counter, time=(0, 0, 0)):
         width = len(grid[0])
         buffer = StringIO()
         with redirect_stdout(buffer):
@@ -34,7 +34,9 @@ class SnakeRenderer:
                 print("    ╚═", horiz_border, "═╝", sep='')
                 print(*cols)
 
+            hours, minutes, seconds = [self._colors.TIMER + str(p).zfill(2) + self._colors.END for p in time]
             print(f"Snakes Remaining: {self._colors.THREAT_COUNTER}{counter}{self._colors.END}")
+            print(f"Time Elapsed: {hours}:{minutes}:{seconds}")
         return buffer.getvalue()
 
     def render_square(self, square):
