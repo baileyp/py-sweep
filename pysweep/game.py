@@ -1,22 +1,23 @@
-from random import randrange
+from random import randrange, choice
 
 from pysweep.timer import Timer
 
+MINI = 'M'
 EASY = 'E'
 INTERMEDIATE = 'I'
 HARD = 'H'
 FLAG = 'F'
 REVEAL = 'R'
 QUIT = 'Q'
-DIFFICULTIES = (EASY, INTERMEDIATE, HARD)
+DIFFICULTIES = (MINI, EASY, INTERMEDIATE, HARD)
 ACTIONS = (FLAG, REVEAL)
 
 
 class Board:
     def __init__(self, difficulty, renderer):
-        self._width = {EASY: 9, INTERMEDIATE: 15, HARD: 20}.get(difficulty)
-        self._height = {EASY: 9, INTERMEDIATE: 9, HARD: 15}.get(difficulty)
-        self._threat_counter = {EASY: 10, INTERMEDIATE: 20, HARD: 30}.get(difficulty)
+        self._width = {MINI: 3, EASY: choice(range(8, 11)), INTERMEDIATE: choice(range(15, 17)), HARD: 30}.get(difficulty)
+        self._height = {MINI: 3, EASY: self._width, INTERMEDIATE: choice(range(13, 17)), HARD: 16}.get(difficulty)
+        self._threat_counter = {MINI: 1, EASY: 10, INTERMEDIATE: 40, HARD: 99}.get(difficulty)
         self._grid = [[self.Square() for _ in range(0, self._width)] for _ in range(0, self._height)]
         self._hidden_remaining = self._width * self._height - self._threat_counter
         self._renderer = renderer
