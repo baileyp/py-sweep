@@ -1,7 +1,6 @@
 import pytest
+from unittest import mock
 from pysweep import console as module
-from tests.mocks import mock_input
-from tests.stubs import FunctionInvoked
 
 
 class TestConsole:
@@ -10,30 +9,37 @@ class TestConsole:
         user_input = "Input"
         prompt = "Prompt"
 
-        monkeypatch.setattr('builtins.input', mock_input(prompt, user_input))
-        assert user_input == module.read(prompt)
+        with mock.patch('builtins.input', return_value=user_input) as patched_input:
+            monkeypatch.setattr('builtins.input', patched_input)
+            assert patched_input.called_once_with(f"{prompt} ")
+            assert module.read(prompt) == user_input
 
-        monkeypatch.setattr('builtins.input', mock_input(prompt, f"\t{user_input}  "))
-        assert user_input == module.read(prompt)
+        with mock.patch('builtins.input', return_value=f"\t{user_input}  ") as patched_input:
+            monkeypatch.setattr('builtins.input', patched_input)
+            assert patched_input.called_once_with(f"{prompt} ")
+            assert module.read(prompt) == user_input
 
     def test_read_with_builtin_cast(self, monkeypatch):
         user_input = "7"
         prompt = "Prompt"
-        monkeypatch.setattr('builtins.input', mock_input(prompt, user_input))
-        assert int(user_input) == module.read("Prompt", int)
+
+        with mock.patch('builtins.input', return_value=user_input) as patched_input:
+            monkeypatch.setattr('builtins.input', patched_input)
+            assert patched_input.called_once_with(f"{prompt} ")
+            assert module.read(prompt, int) == int(user_input)
 
     def test_read_with_cast(self, monkeypatch):
         user_input = "Input"
         prompt = "Prompt"
         casted = "Casted"
 
-        def cast(i):
-            nonlocal casted, user_input
-            assert i == user_input
-            return casted
+        cast = mock.Mock(return_value=casted)
 
-        monkeypatch.setattr('builtins.input', mock_input(prompt, user_input))
-        assert casted == module.read(prompt, cast)
+        with mock.patch('builtins.input', return_value=user_input) as patched_input:
+            monkeypatch.setattr('builtins.input', patched_input)
+            assert module.read(prompt, cast) == casted
+            assert patched_input.called_once_with(f"{prompt} ")
+            assert cast.called_once_with(user_input)
 
     def test_read_cast_throws_value_error(self, monkeypatch):
         with pytest.raises(ValueError):
@@ -49,51 +55,36 @@ class TestConsole:
         assert "Input" == module.read_until(lambda: "Input", lambda *_: True, "Fail")
 
     def test_read_until_validator_fails(self, monkeypatch):
-        user_input = "Input"
+        user_input = ['First', 'Second']
         failure = "Fail"
-        responses = [False, True]
-        cursor = -1
 
-        def out(message):
-            nonlocal failure
-            assert failure == message
-
-        def validator(*args):
-            nonlocal cursor, user_input, responses
-            cursor += 1
-            assert args == tuple(user_input)
-            return responses[cursor]
-
+        callback = mock.Mock(side_effect=user_input)
+        out = mock.Mock(return_value=None)
+        validator = mock.Mock(side_effect=[False, True])
         monkeypatch.setattr(module, "out", out)
 
-        module.read_until(lambda: user_input, validator, failure)
+        assert module.read_until(callback, validator, failure) == user_input[1]
+
+        out.assert_called_once_with(failure)
+        validator.assert_has_calls([mock.call(_) for _ in user_input])
+        assert callback.call_count == 2
 
     def test_read_until_callable_failure(self):
-        user_input = "Input"
-        responses = [False, True]
-        cursor = -1
+        user_input = ['First', 'Second']
 
-        def failure():
-            raise FunctionInvoked
+        callback = mock.Mock(side_effect=user_input)
+        failure = mock.Mock(return_value=None)
 
-        def validator(*args):
-            nonlocal cursor, user_input, responses
-            cursor += 1
-            assert args == tuple(user_input)
-            return responses[cursor]
+        validator = mock.Mock(side_effect=[False, True])
 
-        with pytest.raises(FunctionInvoked):
-            module.read_until(lambda: user_input, validator, failure)
+        module.read_until(callback, validator, failure)
+        validator.assert_has_calls([mock.call(_) for _ in user_input])
+        assert failure.called_once()
 
-    def test_out(self, monkeypatch):
+    def test_out(self):
         message = "message"
 
-        def mock_print(m):
-            nonlocal message
-            assert m == message
-            raise FunctionInvoked
+        renderer = mock.Mock(return_value=None)
+        module.out(message, renderer)
 
-        monkeypatch.setattr("builtins.print", mock_print)
-
-        with pytest.raises(FunctionInvoked):
-            module.out(message, mock_print)
+        renderer.assert_called_once_with(message)

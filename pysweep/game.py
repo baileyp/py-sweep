@@ -2,22 +2,16 @@ from random import randrange, choice
 
 from pysweep.timer import Timer
 
-MINI = 'M'
-EASY = 'E'
-INTERMEDIATE = 'I'
-HARD = 'H'
 FLAG = 'F'
 REVEAL = 'R'
 QUIT = 'Q'
-DIFFICULTIES = (MINI, EASY, INTERMEDIATE, HARD)
 ACTIONS = (FLAG, REVEAL)
 
-
 class Board:
-    def __init__(self, difficulty, renderer):
-        self._width = {MINI: 3, EASY: choice(range(8, 11)), INTERMEDIATE: choice(range(15, 17)), HARD: 30}.get(difficulty)
-        self._height = {MINI: 3, EASY: self._width, INTERMEDIATE: choice(range(13, 17)), HARD: 16}.get(difficulty)
-        self._threat_counter = {MINI: 1, EASY: 10, INTERMEDIATE: 40, HARD: 99}.get(difficulty)
+    def __init__(self, spec, renderer):
+        self._width = spec.cols
+        self._height = spec.rows
+        self._threat_counter = spec.threats
         self._grid = [[self.Square() for _ in range(0, self._width)] for _ in range(0, self._height)]
         self._hidden_remaining = self._width * self._height - self._threat_counter
         self._renderer = renderer
@@ -29,26 +23,29 @@ class Board:
             while True:
                 row = randrange(0, self._height)
                 col = randrange(0, self._width)
-                square = self._grid[row][col]
+                square = self._fetch_square(col, row)
                 if not square.has_threat():
                     break
             square.place_threat()
             self._set_clues_around(col, row)
             threats -= 1
 
+    def __iter__(self):
+        for row in self._grid:
+            for square in row:
+                yield square
+
+    def __contains__(self, item):
+        col, row = item
+        return 0 <= row < self._height and 0 <= col < self._width
+
     def _set_clues_around(self, col, row):
         null = self.NullSquare()
-        self._fetch_square(col - 1, row - 1, null).next_to_threat()
-        self._fetch_square(col - 1, row, null).next_to_threat()
-        self._fetch_square(col - 1, row + 1, null).next_to_threat()
-        self._fetch_square(col, row - 1, null).next_to_threat()
-        self._fetch_square(col, row + 1, null).next_to_threat()
-        self._fetch_square(col + 1, row - 1, null).next_to_threat()
-        self._fetch_square(col + 1, row, null).next_to_threat()
-        self._fetch_square(col + 1, row + 1, null).next_to_threat()
+        for col, row in self.neighbors_of(col, row):
+            self._fetch_square(col, row, null).next_to_threat()
 
     def _fetch_square(self, col, row, default=None):
-        if self.valid_row(row) and self.valid_col(col):
+        if (col, row) in self:
             return self._grid[row][col]
         return default
 
@@ -63,22 +60,22 @@ class Board:
             if square.is_flagged():
                 square.flag()
                 self._threat_counter += 1
-            self._dfs_visit(col - 1, row - 1)
-            self._dfs_visit(col - 1, row)
-            self._dfs_visit(col - 1, row + 1)
-            self._dfs_visit(col, row - 1)
-            self._dfs_visit(col, row + 1)
-            self._dfs_visit(col + 1, row - 1)
-            self._dfs_visit(col + 1, row)
-            self._dfs_visit(col + 1, row + 1)
+            for col, row in self.neighbors_of(col, row):
+                self._dfs_visit(col, row)
+
+    @staticmethod
+    def neighbors_of(col, row):
+        for n_col in range(col - 1, col + 2):
+            for n_row in range(row - 1, row + 2):
+                if col != n_col or row != n_row:
+                    yield n_col, n_row
 
     def _reveal(self):
-        for row in self._grid:
-            for square in row:
-                square.reveal()
+        for square in self:
+            square.reveal()
 
     def play(self, action, col, row):
-        square = self._grid[row][col]
+        square = self._fetch_square(col, row)
         if action == FLAG:
             if square.revealed():
                 raise CannotFlag
@@ -96,15 +93,9 @@ class Board:
             if self._hidden_remaining == 0:
                 raise Victory
 
-        except ThreatFound as e:
+        except (ThreatFound, Victory) as e:
             self._reveal()
             raise e
-
-    def valid_row(self, row):
-        return 0 <= row < self._height
-
-    def valid_col(self, col):
-        return 0 <= col < self._width
 
     def render(self):
         return self._renderer.render_board(self._grid, self._threat_counter, self._timer.get_elapsed())
@@ -160,6 +151,38 @@ class Board:
     class NullSquare(Square):
         def next_to_threat(self):
             pass
+
+
+class Spec:
+    MINI = 'M'
+    EASY = 'E'
+    INTERMEDIATE = 'I'
+    HARD = 'H'
+    DIFFICULTIES = (MINI, EASY, INTERMEDIATE, HARD)
+
+    def __init__(self, difficulty):
+        if not self.valid(difficulty):
+            raise ValueError("Invalid difficulty")
+
+        self.cols = {
+            self.MINI: 3,
+            self.EASY: choice(range(8, 11)),
+            self.INTERMEDIATE: choice(range(15, 17)),
+            self.HARD: 30
+        }.get(difficulty)
+
+        self.rows = {
+            self.MINI: 3,
+            self.EASY: self.cols,
+            self.INTERMEDIATE: choice(range(13, 17)),
+            self.HARD: 16
+        }.get(difficulty)
+
+        self.threats = {self.MINI: 1, self.EASY: 10, self.INTERMEDIATE: 40, self.HARD: 99}.get(difficulty)
+
+    @staticmethod
+    def valid(difficulty):
+        return difficulty in Spec.DIFFICULTIES
 
 
 class ThreatFound(Exception):

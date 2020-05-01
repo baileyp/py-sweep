@@ -21,13 +21,13 @@ class SnakeRenderer:
                 print(*cols)
                 print("    ╔═", horiz_border, "═╗", sep='')
 
-            for i, row in enumerate(grid):
+            for i, row in enumerate(grid, start=1):
                 line = [self.render_square(square) for square in row]
                 if self._with_chrome:
                     line.insert(0, '║')
-                    line.insert(0, str(i + 1).rjust(2, ' '))
+                    line.insert(0, str(i).rjust(2, ' '))
                     line.append('║')
-                    line.append(str(i + 1).ljust(2, ' '))
+                    line.append(str(i).ljust(2, ' '))
                 print(*line, sep='  ')
 
             if self._with_chrome:

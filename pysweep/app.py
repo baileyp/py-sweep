@@ -9,11 +9,11 @@ def run():
 
     user_input = console.read_until(
         lambda: console.read("What difficulty? (E)asy, (I)ntermediate, (H)ard: ").upper(),
-        lambda d: d in game.DIFFICULTIES,
+        game.Spec.valid,
         "Invalid difficulty chosen."
     )
 
-    board = game.Board(user_input, renderer.SnakeRenderer())
+    board = game.Board(game.Spec(user_input), renderer.SnakeRenderer())
 
     console.out("\nHOW TO PLAY")
     console.out("-----------")
@@ -45,13 +45,13 @@ def run():
     def validate_command(action, col, row):
         if action == game.QUIT:
             raise game.QuitGame
-        return action in game.ACTIONS and board.valid_col(col) and board.valid_row(row)
+        return action in game.ACTIONS and (col, row) in board
 
     try:
         while True:
             action, col, row = console.read_until(
                 lambda: console.read("Make your move:", parse_command, ('', 0, 0)),
-                validate_command,
+                lambda c: validate_command(*c),
                 "Invalid command, please try again"
             )
             try:

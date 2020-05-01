@@ -1,5 +1,4 @@
 import time
-from math import floor
 
 
 class TimerError(Exception):
@@ -18,7 +17,7 @@ class Timer:
 
     def get_elapsed(self):
         seconds = round(time.perf_counter() - self._start_time)
-        hours, seconds = floor(seconds / 3600), seconds % 3600
-        minutes, seconds = floor(seconds / 60), seconds % 60
+        hours, seconds = seconds // 3600, seconds % 3600
+        minutes, seconds = seconds // 60, seconds % 60
 
         return hours, minutes, seconds

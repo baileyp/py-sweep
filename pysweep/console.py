@@ -10,7 +10,7 @@ def read(prompt, cast=str, on_value_error=None):
 def read_until(callback, validator, failure):
     while True:
         user_input = callback()
-        if validator(*user_input):
+        if validator(user_input):
             break
         if callable(failure):
             failure()
@@ -19,5 +19,5 @@ def read_until(callback, validator, failure):
     return user_input
 
 
-def out(message, renderer=print, **kwargs):
+def out(message, renderer=print):
     renderer(message)
