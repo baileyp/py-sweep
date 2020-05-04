@@ -5,7 +5,7 @@ There are ~~pythons~~ snakes in the grass!
 This project is a console implementation of the classic game
 [Minesweeper](https://en.wikipedia.org/wiki/Minesweeper_\(video_game\))
 as recommended by
-[Triplebyte's interview guide](https://triplebyte.com/candidates/interview_guide).
+[Triplebyte's interview guide](https://triplebyte.com/interview_guide).
 
 ## Running
 
@@ -40,6 +40,9 @@ $ pytest
 [Null Object Pattern](https://en.wikipedia.org/wiki/Null_object_pattern)
 : For gracefully dealing with out of bounds squares.
 
+[Generators](https://en.wikipedia.org/wiki/Generator_(computer_programming))
+: For various iterations, to keep memory use nice and tidy
+
 ## Thoughts
 
 I know there are best in class packages available in the community to handle some of the things done here better, but as
@@ -47,9 +50,6 @@ a practice exercise I wanted to keep this pure python, save testing.
 
 I'm not great at making console applications and am even less experienced at dealing with game loops. I don't feel great
 about the use of Exceptions to manage game termination but it works for now. 
-
-Now that I have some unit tests in place I feel like there are lots of improvements/refinements to be made there. More
-to be done with pytest's fixtures, stubs, and spies.
 
 Overall I'm pleased with the implementation for a few hours work.
 
@@ -63,9 +63,11 @@ Overall I'm pleased with the implementation for a few hours work.
 - ~~Feature: Add timer~~
 - ~~Feature: Add UI colors~~
 - Feature: Richer input options (Multiple row/column selection per command)
+- Feature: Command-Line arguments to drive feature toggles
 - ~~Refactor: Uncouple rendering from state~~
 - Refactor: Get fancy! Maybe some context managers or decorators
 - ~~Refactor: Unit tests to make better use of built-in mocking~~
+- Major Version: Write as a [curses](https://docs.python.org/3/howto/curses.html) app
 
 ## Changelog
 
