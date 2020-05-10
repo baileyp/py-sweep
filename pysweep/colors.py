@@ -1,4 +1,5 @@
 class Colorless:
+    HINT = ''
     CLUE = ''
     GRASS = ''
     FLAG = ''
@@ -10,6 +11,7 @@ class Colorless:
 
 
 class Colored(Colorless):
+    HINT = '\033[38;5;33m'
     THREAT_COUNTER = '\033[38;5;196m'
     TIMER = '\033[38;5;33m'
     END = '\033[0m'

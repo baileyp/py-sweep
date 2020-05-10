@@ -1,4 +1,4 @@
-from pysweep import colors, console, game, renderer
+from pysweep import console, game, renderer
 
 
 def run():
@@ -22,36 +22,25 @@ def run():
     console.out(" - Reveal will pull the grass and show what is underneath. This is the default and can be omitted.")
     console.out(" - Flag will toggle a plot of grass as having a snake under it or not.")
     console.out(" - Quit will exit the current game")
-    console.out("\nPlots are specified by column then row.")
+    console.out("\nPlots are specified by column then row. You can also specify sequences or rows/and or columns by")
+    console.out("separating values with commas or ranges with a dash")
     console.out("\nSAMPLE COMMANDS")
     console.out("---------------")
     console.out("Reveal column 5, row 5: 5 5")
     console.out("Flag/Unflag column 1, row 3: f 1 3")
+    console.out("Reveal column 5, rows 3 through 6: 5 3-6")
+    console.out("Reveal columns 1 and 5, row 7: 1,5 7")
+    console.out("Reveal columns 7 and 9, rows 3 through 5: 7,9 3-5")
     console.out("Quit game: q")
 
     console.out("\nLet's begin! here is your yard:\n")
     console.out(board.render())
 
-    def parse_command(cmd):
-        if cmd.upper() == game.QUIT:
-            raise game.QuitGame
-        action = game.REVEAL
-        col, row, *_ = cmd.split(' ')
-        if col.upper() in game.ACTIONS:
-            action, col, row = cmd.split(' ')
-        action, col, row = action.upper(), int(col) - 1, int(row) - 1
-        return action, col, row
-
-    def validate_command(action, col, row):
-        if action == game.QUIT:
-            raise game.QuitGame
-        return action in game.ACTIONS and (col, row) in board
-
     try:
         while True:
             action, col, row = console.read_until(
-                lambda: console.read("Make your move:", parse_command, ('', 0, 0)),
-                lambda c: validate_command(*c),
+                lambda: console.read("Make your move:", board.parse_command, ('', 0, 0)),
+                lambda c: board.validate_command(*c),
                 "Invalid command, please try again"
             )
             try:

@@ -62,14 +62,60 @@ class TestGame:
         spec.cols = 7
         board = Board(spec, renderer)
 
-        for col in range(0, spec.cols):
-            for row in range(0, spec.rows):
+        cols = set(range(0, spec.cols))
+        rows = set(range(0, spec.rows))
+
+        # Happy Path
+        for col in cols:
+            for row in rows:
                 assert (col, row) in board
 
+        # Out of Bounds ints
         assert (-1, 0) not in board
         assert (0, -1) not in board
         assert (spec.cols, 0) not in board
         assert (0, spec.rows) not in board
+
+        # Full Rows and Cols
+        for col in cols:
+            assert (col, rows) in board
+        for row in rows:
+            assert (cols, row) in board
+        assert (cols, rows) in board
+
+        # Out of Bounds sets
+        assert (cols | {-1}, 0) not in board
+        assert (0, rows | {-1}) not in board
+        assert (cols | {spec.cols}, 0) not in board
+        assert (0, rows | {spec.rows}) not in board
+
+    @pytest.mark.parametrize('command, expected', [
+        ('4 7', (module.REVEAL, '4', '7')),
+        ('r 4 7', (module.REVEAL, '4', '7')),
+        ('f 3 1', (module.FLAG, '3', '1')),
+    ])
+    def test_parse_command(self, monkeypatch, command, expected):
+        monkeypatch.setattr('pysweep.game.Board.parse_coord', lambda c: c)
+
+        assert module.Board.parse_command(command) == expected
+
+    def test_parse_command_quit_raises_exception(self):
+        with pytest.raises(module.QuitGame):
+            module.Board.parse_command(module.QUIT)
+
+    def test_parse_command_too_many_values_raises_exception(self, monkeypatch):
+        monkeypatch.setattr('pysweep.game.Board.parse_coord', lambda c: c)
+        with pytest.raises(ValueError):
+            assert module.Board.parse_command('r 1 2 3')
+
+    @pytest.mark.parametrize('coord, expected', [
+        ('1', {0}),
+        ('4-7', {3, 4, 5, 6}),
+        ('7-4', {3, 4, 5, 6}),
+        ('8,12,1', {0, 7, 11}),
+    ])
+    def test_parse_coord(self, coord, expected):
+        assert module.Board.parse_coord(coord) == expected
 
     def test_play_reveal_on_blank_square(self, board, square):
         board.set_square_at(0, 0, square)

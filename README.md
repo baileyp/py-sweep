@@ -43,6 +43,9 @@ $ pytest
 [Generators](https://en.wikipedia.org/wiki/Generator_(computer_programming))
 : For various iterations, to keep memory use nice and tidy
 
+[Recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science))
+: For the application of scalar-based algorithms against non-scalar data
+
 ## Thoughts
 
 I know there are best in class packages available in the community to handle some of the things done here better, but as
@@ -62,7 +65,7 @@ Overall I'm pleased with the implementation for a few hours work.
 - ~~Feature: Add snake count~~
 - ~~Feature: Add timer~~
 - ~~Feature: Add UI colors~~
-- Feature: Richer input options (Multiple row/column selection per command)
+- ~~Feature: Richer input options (Multiple row/column selection per command)~~
 - Feature: Command-Line arguments to drive feature toggles
 - ~~Refactor: Uncouple rendering from state~~
 - Refactor: Get fancy! Maybe some context managers or decorators
@@ -70,6 +73,11 @@ Overall I'm pleased with the implementation for a few hours work.
 - Major Version: Write as a [curses](https://docs.python.org/3/howto/curses.html) app
 
 ## Changelog
+
+### 0.6.0
+
+- Added richer input options
+- Board difficulties now mirror the original Minesweeper
 
 ### 0.5.0
 

@@ -37,6 +37,16 @@ class Board:
 
     def __contains__(self, item):
         col, row = item
+        if isinstance(col, set):
+            for c in col:
+                if not (c, row) in self:
+                    return False
+            return True
+        if isinstance(row, set):
+            for r in row:
+                if not (col, r) in self:
+                    return False
+            return True
         return 0 <= row < self._height and 0 <= col < self._width
 
     def _set_clues_around(self, col, row):
@@ -75,6 +85,20 @@ class Board:
             square.reveal()
 
     def play(self, action, col, row):
+        if isinstance(col, set):
+            for c in col:
+                try:
+                    self.play(action, c, row)
+                except CannotReveal:
+                    pass
+            return
+        if isinstance(row, set):
+            for r in row:
+                try:
+                    self.play(action, col, r)
+                except CannotReveal:
+                    pass
+            return
         square = self._fetch_square(col, row)
         if action == FLAG:
             if square.revealed():
@@ -96,6 +120,31 @@ class Board:
         except (ThreatFound, Victory) as e:
             self._reveal()
             raise e
+
+    @staticmethod
+    def parse_command(cmd):
+        if cmd.upper() == QUIT:
+            raise QuitGame
+        action = REVEAL
+        col, row, *_ = cmd.split(' ')
+        if col.upper() in ACTIONS:
+            action, col, row = cmd.split(' ')
+        action, col, row = action.upper(), Board.parse_coord(col), Board.parse_coord(row)
+        return action, col, row
+
+    @staticmethod
+    def parse_coord(coord):
+        if coord.count('-') == 1:
+            first, last = map(int, iter(coord.split('-')))
+            if first > last:
+                first, last = last, first
+            return set(range(first - 1, last))
+        return set([int(n) - 1 for n in coord.split(',')])
+
+    def validate_command(self, action, col, row):
+        if action == QUIT:
+            raise QuitGame
+        return action in ACTIONS and (col, row) in self
 
     def render(self):
         return self._renderer.render_board(self._grid, self._threat_counter, self._timer.get_elapsed())
